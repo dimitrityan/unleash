@@ -345,6 +345,11 @@ export interface IFeatureToggleQuery {
     inlineSegmentConstraints?: boolean;
 }
 
+export interface IFeatureToggleDeltaQuery extends IFeatureToggleQuery {
+    toggleNames?: string[];
+    environment: string;
+}
+
 export interface ITag {
     value: string;
     type: string;

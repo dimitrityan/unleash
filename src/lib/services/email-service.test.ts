@@ -103,47 +103,6 @@ test('should strip special characters from email subject', async () => {
     expect(emailService.stripSpecialCharacters('tom-jones')).toBe('tom-jones');
 });
 
-test('Can send order environments email', async () => {
-    process.env.ORDER_ENVIRONMENTS_BCC = 'bcc@bcc.com';
-    const emailService = new EmailService({
-        email: {
-            host: 'test',
-            port: 587,
-            secure: false,
-            smtpuser: '',
-            smtppass: '',
-            sender: 'noreply@getunleash.ai',
-        },
-        getLogger: noLoggerProvider,
-    } as unknown as IUnleashConfig);
-
-    const customerId = 'customer133';
-    const environments = [
-        { name: 'test', type: 'development' },
-        { name: 'live', type: 'production' },
-    ];
-
-    const content = await emailService.sendOrderEnvironmentEmail(
-        'user@user.com',
-        customerId,
-        environments,
-    );
-    expect(content.from).toBe('noreply@getunleash.ai');
-    expect(content.subject).toBe('Unleash - ordered environments successfully');
-    expect(
-        content.html.includes(
-            `<li>Name: ${environments[0].name}, Type: ${environments[0].type}</li>`,
-        ),
-    ).toBe(true);
-    expect(
-        content.html.includes(
-            `<li>Name: ${environments[1].name}, Type: ${environments[1].type}</li>`,
-        ),
-    ).toBe(true);
-    expect(content.html.includes(customerId)).toBe(true);
-    expect(content.bcc).toBe('bcc@bcc.com');
-});
-
 test('Can send productivity report email', async () => {
     const emailService = new EmailService({
         server: {
@@ -167,15 +126,23 @@ test('Can send productivity report email', async () => {
             flagsCreated: 1,
             productionUpdates: 2,
             health: 99,
+            previousMonth: {
+                health: 89,
+                flagsCreated: 1,
+                productionUpdates: 3,
+            },
         },
     );
     expect(content.from).toBe('noreply@getunleash.ai');
     expect(content.subject).toBe('Unleash - productivity report');
-    expect(content.html.includes(`Productivity Report`)).toBe(true);
-    expect(content.html.includes(`localhost/insights`)).toBe(true);
-    expect(content.html.includes(`localhost/profile`)).toBe(true);
-    expect(content.text.includes(`localhost/insights`)).toBe(true);
-    expect(content.text.includes(`localhost/profile`)).toBe(true);
+    expect(content.html.includes('Productivity Report')).toBe(true);
+    expect(content.html.includes('localhost/insights')).toBe(true);
+    expect(content.html.includes('localhost/profile')).toBe(true);
+    expect(content.html.includes('#68a611')).toBe(true);
+    expect(content.html.includes('10% more than previous month')).toBe(true);
+    expect(content.text.includes('localhost/insights')).toBe(true);
+    expect(content.text.includes('localhost/profile')).toBe(true);
+    expect(content.text.includes('localhost/profile')).toBe(true);
 });
 
 test('Should add optional headers to productivity email', async () => {
@@ -210,6 +177,7 @@ test('Should add optional headers to productivity email', async () => {
             flagsCreated: 1,
             productionUpdates: 2,
             health: 99,
+            previousMonth: null,
         },
     );
 

@@ -24,7 +24,7 @@ const StyledCancelButton = styled(Button)(({ theme }) => ({
 }));
 
 export const CreateReleasePlanTemplate = () => {
-    const { uiConfig } = useUiConfig();
+    const { uiConfig, isEnterprise } = useUiConfig();
     const releasePlansEnabled = useUiFlag('releasePlans');
     const { setToastApiError, setToastData } = useToast();
     const navigate = useNavigate();
@@ -59,7 +59,7 @@ export const CreateReleasePlanTemplate = () => {
                 scrollToTop();
                 setToastData({
                     type: 'success',
-                    title: 'Release plan template created',
+                    text: 'Release plan template created',
                 });
                 navigate('/release-management');
             } catch (error: unknown) {
@@ -75,7 +75,7 @@ export const CreateReleasePlanTemplate = () => {
     --header 'Content-Type: application/json' \\
     --data-raw '${JSON.stringify(getTemplatePayload(), undefined, 2)}'`;
 
-    if (!releasePlansEnabled) {
+    if (!releasePlansEnabled || !isEnterprise()) {
         return null;
     }
 
@@ -97,7 +97,9 @@ export const CreateReleasePlanTemplate = () => {
                 <CreateButton
                     name='template'
                     permission={RELEASE_PLAN_TEMPLATE_CREATE}
-                />
+                >
+                    Save template
+                </CreateButton>
                 <StyledCancelButton onClick={handleCancel}>
                     Cancel
                 </StyledCancelButton>

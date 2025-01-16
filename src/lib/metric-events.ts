@@ -14,6 +14,8 @@ const USER_LOGIN = 'user-login' as const;
 const EXCEEDS_LIMIT = 'exceeds-limit' as const;
 const REQUEST_ORIGIN = 'request_origin' as const;
 const ADDON_EVENTS_HANDLED = 'addon-event-handled' as const;
+const CLIENT_METRICS_NAMEPREFIX = 'client-api-nameprefix';
+const CLIENT_METRICS_TAGS = 'client-api-tags';
 
 type MetricEvent =
     | typeof REQUEST_TIME
@@ -28,7 +30,9 @@ type MetricEvent =
     | typeof STAGE_ENTERED
     | typeof USER_LOGIN
     | typeof EXCEEDS_LIMIT
-    | typeof REQUEST_ORIGIN;
+    | typeof REQUEST_ORIGIN
+    | typeof CLIENT_METRICS_NAMEPREFIX
+    | typeof CLIENT_METRICS_TAGS;
 
 type RequestOriginEventPayload = {
     type: 'UI' | 'API';
@@ -76,6 +80,8 @@ export {
     EXCEEDS_LIMIT,
     REQUEST_ORIGIN,
     ADDON_EVENTS_HANDLED,
+    CLIENT_METRICS_NAMEPREFIX,
+    CLIENT_METRICS_TAGS,
     type MetricEvent,
     type MetricEventPayload,
     emitMetricEvent,
